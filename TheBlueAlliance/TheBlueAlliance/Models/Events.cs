@@ -12,7 +12,7 @@
         {
             public string key { get; set; }
             public string website { get; set; }
-            public bool official { get; set; }
+            public string official { get; set; }
             public string end_date { get; set; }
             public string name { get; set; }
             public string short_name { get; set; }

@@ -10,8 +10,25 @@
 
         public class Blue
         {
-            public int auto { get; set; }
-            public int foul { get; set; }
+            public int teleopPoints { get; set; }
+            public int autoPoints { get; set; }
+            public int foulPoints { get; set; }
+            public int totalPoints { get; set; }
+            public int autoRotorPoints { get; set; }
+            public int adjustPoints { get; set; }
+            public int teleopRotorPoints { get; set; }
+            public int autoFuelHigh { get; set; }
+            public int teleopFuelHigh { get; set; }
+            public int teleopTakeoffPoints { get; set; }
+            public bool kPaRankingPointAchieved { get; set; }
+            public int autoFuelLow { get; set; }
+            public int teleopFuelLow { get; set; }
+            public int rotorBonusPoints { get; set; }
+            public int autoMobilityPoints { get; set; }
+            public int autoFuelPoints { get; set; }
+            public int teleopFuelPoints { get; set; }
+            public bool rotorRankingPointAchieved { get; set; }
+            public int kpaBonusPoints { get; set; }
         }
 
         public class Blue1
@@ -36,8 +53,25 @@
 
         public class Red
         {
-            public int auto { get; set; }
-            public int foul { get; set; }
+            public int teleopPoints { get; set; }
+            public int autoPoints { get; set; }
+            public int foulPoints { get; set; }
+            public int totalPoints { get; set; }
+            public int autoRotorPoints { get; set; }
+            public int adjustPoints { get; set; }
+            public int teleopRotorPoints { get; set; }
+            public int autoFuelHigh { get; set; }
+            public int teleopFuelHigh { get; set; }
+            public int teleopTakeoffPoints { get; set; }
+            public bool kPaRankingPointAchieved { get; set; }
+            public int autoFuelLow { get; set; }
+            public int teleopFuelLow { get; set; }
+            public int rotorBonusPoints { get; set; }
+            public int autoMobilityPoints { get; set; }
+            public int autoFuelPoints { get; set; }
+            public int teleopFuelPoints { get; set; }
+            public bool rotorRankingPointAchieved { get; set; }
+            public int kpaBonusPoints { get; set; }
         }
 
         public class Red1
