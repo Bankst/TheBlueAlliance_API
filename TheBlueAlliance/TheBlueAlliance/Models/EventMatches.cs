@@ -4,11 +4,11 @@
     {
         public class Alliances
         {
-            public Blue1 blue { get; set; }
-            public Red1 red { get; set; }
+            public Alliance blue { get; set; }
+            public Alliance red { get; set; }
         }
 
-        public class Blue
+        public class Score
         {
             public int teleopPoints { get; set; }
             public int autoPoints { get; set; }
@@ -31,10 +31,12 @@
             public int kpaBonusPoints { get; set; }
         }
 
-        public class Blue1
+        public class Alliance
         {
+			public string[] dq_team_keys { get; set; }
             public int score { get; set; }
-            public string[] teams { get; set; }
+			public string[] surrogate_team_keys { get; set; }
+            public string[] team_keys { get; set; }
         }
 
         public class Match
@@ -51,39 +53,10 @@
             public string event_key { get; set; }
         }
 
-        public class Red
-        {
-            public int teleopPoints { get; set; }
-            public int autoPoints { get; set; }
-            public int foulPoints { get; set; }
-            public int totalPoints { get; set; }
-            public int autoRotorPoints { get; set; }
-            public int adjustPoints { get; set; }
-            public int teleopRotorPoints { get; set; }
-            public int autoFuelHigh { get; set; }
-            public int teleopFuelHigh { get; set; }
-            public int teleopTakeoffPoints { get; set; }
-            public bool kPaRankingPointAchieved { get; set; }
-            public int autoFuelLow { get; set; }
-            public int teleopFuelLow { get; set; }
-            public int rotorBonusPoints { get; set; }
-            public int autoMobilityPoints { get; set; }
-            public int autoFuelPoints { get; set; }
-            public int teleopFuelPoints { get; set; }
-            public bool rotorRankingPointAchieved { get; set; }
-            public int kpaBonusPoints { get; set; }
-        }
-
-        public class Red1
-        {
-            public int score { get; set; }
-            public string[] teams { get; set; }
-        }
-
         public class Score_Breakdown
         {
-            public Blue blue { get; set; }
-            public Red red { get; set; }
+            public Score blue { get; set; }
+            public Score red { get; set; }
         }
     }
 }

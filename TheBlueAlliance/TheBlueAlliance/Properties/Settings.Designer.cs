@@ -25,13 +25,13 @@ namespace TheBlueAlliance.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3710-xNovax:TheBlueAlliance_API:")]
-        public string Header_Address {
+        [global::System.Configuration.DefaultSettingValueAttribute("plzzrHeQRVUlc7CQF0rpeP8T9gXx4Y8UnPF6wGgq3Ma5dsa65nc3nJK2oOjQSSLs")]
+        public string AuthKey {
             get {
-                return ((string)(this["Header_Address"]));
+                return ((string)(this["AuthKey"]));
             }
             set {
-                this["Header_Address"] = value;
+                this["AuthKey"] = value;
             }
         }
     }

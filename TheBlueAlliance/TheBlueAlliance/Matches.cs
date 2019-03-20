@@ -10,35 +10,15 @@ namespace TheBlueAlliance
 {
     public class Matches
     {
-        public static MatchInformation_2015.Match GetMatchInformation2015(string matchKey)
-        {
-            if (matchKey.Substring(0, 4) != "2015") return null;
-            if (GetMatchInformationJsonData(matchKey) != null)
-            {
-                return JsonConvert.DeserializeObject<MatchInformation_2015.Match>(GetMatchInformationJsonData(matchKey));
-            }
-
-            return null;
-        }
-
-        public static MatchInformation_2014.Match GetMatchInformation2014(string matchKey)
-        {
-            if (matchKey.Substring(0, 4) != "2014") return null;
-            if (GetMatchInformationJsonData(matchKey) != null)
-            {
-                return JsonConvert.DeserializeObject<MatchInformation_2014.Match>(GetMatchInformationJsonData(matchKey));
-            }
-
-            return null;
-        }
-
         private static string GetMatchInformationJsonData(string matchKey)
         {
             try
             {
                 var wc = new WebClient();
-                wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
-                var downloadedData = wc.DownloadString("http://www.thebluealliance.com/api/v2/match/" + matchKey);
+                wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+				var path = $"/match/{matchKey}";
+				var url = $"{Constants.ApiUrl}{path}";
+				var downloadedData = wc.DownloadString(url);
                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json"))
                 {
                     File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json");
@@ -55,12 +35,8 @@ namespace TheBlueAlliance
         }
 
         private static string GetCachedMatchInformationJson(string matchKey)
-        {
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json"))
-            {
-                return File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json");
-            }
-            return null;
-        }
+		{
+			return File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json") ? File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Matches\\" + matchKey + ".json") : null;
+		}
     }
 }

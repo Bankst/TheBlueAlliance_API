@@ -17,7 +17,7 @@
 
         public class Recipient_List
         {
-            public int team_number { get; set; }
+            public string team_key { get; set; }
 
             public string awardee { get; set; }
         }

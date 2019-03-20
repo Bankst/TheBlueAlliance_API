@@ -5,193 +5,214 @@ using System.Net;
 using System.Reflection;
 using Newtonsoft.Json;
 using TheBlueAlliance.Models;
+using TheBlueAlliance.Models.MainModels;
 using TheBlueAlliance.Properties;
 
 namespace TheBlueAlliance
 {
-    public class Events
-    {
-        #region Event Information
-        /// <summary>
-        ///     Provides information for an event
-        /// </summary>
-        /// <param name="eventCode"></param>
-        /// <returns></returns>
-        public static Event.EventInformation GetEventInformation(string eventCode)
-        {
-            if (GetEventInformationJson(eventCode) != null)
-            {
-                return JsonConvert.DeserializeObject<Event.EventInformation>(GetEventInformationJson(eventCode));
-            }
-            return null;
-        }
+	public class Events
+	{
+		#region Event Information
+		/// <summary>
+		///     Provides information for an event
+		/// </summary>
+		/// <param name="eventKey"></param>
+		/// <returns></returns>
+		public static Event GetEventInformation(string eventKey)
+		{
+			return GetEventInformationJson(eventKey) != null ? JsonConvert.DeserializeObject<Event>(GetEventInformationJson(eventKey)) : null;
+		}
 
-        private static string GetEventInformationJson(string eventCode)
-        {
-            var wc = new WebClient();
-            wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
-            try
-            {
-                var url = ("http://www.thebluealliance.com/api/v2/event/" + eventCode);
-                string downloadedData = wc.DownloadString(url);
+		private static string GetEventInformationJson(string eventKey)
+		{
+			var path = $"/event/{eventKey}";
+			var url = $"{Constants.ApiUrl}{path}";
 
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventCode + ".json"))
-                {
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventCode + ".json");
-                }
-                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\");
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventCode + ".json", downloadedData);
-                return downloadedData;
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-                return GetEventInformationCachedJson(eventCode);
-            }
-        }
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					var downloadedData = wc.DownloadString(url);
 
-        private static string GetEventInformationCachedJson(string eventCode)
-        {
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventCode + ".json"))
-            {
-                return File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventCode + ".json");
-            }
-            return null;
-        }
+					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" +
+									eventKey + ".json"))
+					{
+						File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" +
+									eventKey + ".json");
+					}
 
-        #endregion
+					Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory +
+											  "\\Cache\\TBA\\Events\\EventInformation\\");
+					File.WriteAllText(
+						AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey +
+						".json", downloadedData);
+					return downloadedData;
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+				return GetEventInformationCachedJson(eventKey);
+			}
+		}
 
-        #region Event Awards
-        public static EventAwards.Award[] GetEventAwards(string eventCode)
-        {
-            if (GetEventAwardsJson(eventCode) != null)
-            {
-                return JsonConvert.DeserializeObject<List<EventAwards.Award>>(GetEventAwardsJson(eventCode)).ToArray();
-            }
-            return null;
-        }
+		private static string GetEventInformationCachedJson(string eventKey)
+		{
+			return File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey + ".json") ? File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey + ".json") : null;
+		}
+		#endregion
 
-        private static string GetEventAwardsJson(string eventCode)
-        {
-            try
-            {
-                var wc = new WebClient();
-                wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
+		#region Event Awards
+		public static EventAwards.Award[] GetEventAwards(string eventKey)
+		{
+			return GetEventAwardsJson(eventKey) != null ? JsonConvert.DeserializeObject<List<EventAwards.Award>>(GetEventAwardsJson(eventKey)).ToArray() : null;
+		}
 
-                var url = ("http://www.thebluealliance.com/api/v2/event/" + eventCode + "/awards");
-                string downloadedData = wc.DownloadString(url);
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventCode + ".json"))
-                {
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventCode + ".json");
-                }
-                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\");
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventCode + ".json", downloadedData);
-                return downloadedData;
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-                return GetEventAwardsCachedJson(eventCode);
-            }
-        }
+		private static string GetEventAwardsJson(string eventKey)
+		{
+			var path = $"/event/{eventKey}/awards";
+			var url = $"{Constants.ApiUrl}{path}";
 
-        private static string GetEventAwardsCachedJson(string eventCode)
-        {
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventCode + ".json"))
-            {
-                return File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventCode + ".json");
-            }
-            return null;
-        }
-        #endregion
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					var downloadedData = wc.DownloadString(url);
+					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json"))
+					{
+						File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json");
+					}
+					Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\");
+					File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json", downloadedData);
+					return downloadedData;
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+				return GetEventAwardsCachedJson(eventKey);
+			}
+		}
 
-        public static EventMatches.Match[] GetEventMatches(string eventKey)
-        {
-            var dataList = new List<EventMatches.Match>();
-            var eventMatchesToReturn = dataList.ToArray();
-            var wc = new WebClient();
-            wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
-            try
-            {
-                var url = ("http://www.thebluealliance.com/api/v2/event/" + eventKey + "/matches");
-                dataList = JsonConvert.DeserializeObject<List<EventMatches.Match>>(wc.DownloadString(url));
-                eventMatchesToReturn = dataList.ToArray();
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return eventMatchesToReturn;
-        }
+		private static string GetEventAwardsCachedJson(string eventKey)
+		{
+			return File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json") ? File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json") : null;
+		}
+		#endregion
 
-        public static EventRankings.Team[] GetEventRankings(string eventKey)
-        {
-            var teamList = new List<EventRankings.Team>();
+		public static EventMatches.Match[] GetEventMatches(string eventKey)
+		{
+			var dataList = new List<EventMatches.Match>();
+			var eventMatchesToReturn = dataList.ToArray();
 
-            var wc = new WebClient();
-            wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
+			var path = $"/event/{eventKey}/matches";
+			var url = $"{Constants.ApiUrl}{path}";
 
-            try
-            {
-                var url = ("http://www.thebluealliance.com/api/v2/event/" + eventKey + "/rankings");
-                var dataList = JsonConvert.DeserializeObject<List<List<object>>>(wc.DownloadString(url));
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					dataList = JsonConvert.DeserializeObject<List<EventMatches.Match>>(wc.DownloadString(url));
+					eventMatchesToReturn = dataList.ToArray();
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+			}
 
-                for (var i = 1; i < dataList.Count; i++)
-                {
-                    var teamToAdd = new EventRankings.Team
-                    {
-                        Rank = Convert.ToInt32(dataList.ToArray()[i][0]),
-                        Team_Number = Convert.ToInt32(dataList.ToArray()[i][1]),
-                        Qual_Average = Convert.ToDouble(dataList.ToArray()[i][2]),
-                        Auto = Convert.ToInt32(dataList.ToArray()[i][3]),
-                        Container = Convert.ToInt32(dataList.ToArray()[i][4]),
-                        Coopertition = Convert.ToInt32(dataList.ToArray()[i][5]),
-                        Litter = Convert.ToInt32(dataList.ToArray()[i][6]),
-                        Tote = Convert.ToInt32(dataList.ToArray()[i][7]),
-                        Played = Convert.ToInt32(dataList.ToArray()[i][8])
-                    };
-                    teamList.Add(teamToAdd);
-                }
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamList.ToArray();
-        }
+			return eventMatchesToReturn;
+		}
 
-        public static Models.Events.Event[] GetEvents(int year)
-        {
-            var dataList = new List<Models.Events.Event>();
-            var wc = new WebClient();
-            wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
-            try
-            {
-                var url = ("http://www.thebluealliance.com/api/v2/events/" + year);
-                dataList = JsonConvert.DeserializeObject<List<Models.Events.Event>>(wc.DownloadString(url));
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return dataList.ToArray();
-        }
+		public static EventRankings.Team[] GetEventRankings(string eventKey)
+		{
+			var teamList = new List<EventRankings.Team>();
+			var dataList = new List<List<object>>();
 
-        public static EventTeams.Team[] GetEventTeamsList(string eventKey)
-        {
-            var teamList = new List<EventTeams.Team>();
-            var wc = new WebClient();
-            wc.Headers.Add("X-TBA-App-Id", Settings.Default.Header_Address + Assembly.GetExecutingAssembly().GetName().Version);
-            try
-            {
-                var url = ("http://www.thebluealliance.com/api/v2/event/" + eventKey + "/teams");
-                teamList = JsonConvert.DeserializeObject<List<EventTeams.Team>>(wc.DownloadString(url));
-            }
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamList.ToArray();
-        }
-    }
+			var path = $"/event/{eventKey}/rankings";
+			var url = $"{Constants.ApiUrl}{path}";
+
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					dataList = JsonConvert.DeserializeObject<List<List<object>>>(wc.DownloadString(url));
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+			}
+			finally
+			{
+				for (var i = 1; i < dataList.Count; i++)
+				{
+					var teamToAdd = new EventRankings.Team
+					{
+						Rank = Convert.ToInt32(dataList.ToArray()[i][0]),
+						Team_Number = Convert.ToInt32(dataList.ToArray()[i][1]),
+						Qual_Average = Convert.ToDouble(dataList.ToArray()[i][2]),
+						Auto = Convert.ToInt32(dataList.ToArray()[i][3]),
+						Container = Convert.ToInt32(dataList.ToArray()[i][4]),
+						Coopertition = Convert.ToInt32(dataList.ToArray()[i][5]),
+						Litter = Convert.ToInt32(dataList.ToArray()[i][6]),
+						Tote = Convert.ToInt32(dataList.ToArray()[i][7]),
+						Played = Convert.ToInt32(dataList.ToArray()[i][8])
+					};
+					teamList.Add(teamToAdd);
+				}
+			}
+			return teamList.ToArray();
+		}
+
+		public static Event[] GetEvents(int year)
+		{
+			var dataList = new List<Event>();
+
+			var path = $"/events/{year}";
+			var url = $"{Constants.ApiUrl}{path}";
+
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					dataList = JsonConvert.DeserializeObject<List<Event>>(wc.DownloadString(url));
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+			}
+
+			return dataList.ToArray();
+		}
+
+		public static EventTeams.Team[] GetEventTeamsList(string eventKey)
+		{
+			var teamList = new List<EventTeams.Team>();
+
+			var path = $"/event/{eventKey}/teams";
+			var url = $"{Constants.ApiUrl}{path}";
+
+			try
+			{
+				using (var wc = new WebClient())
+				{
+					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					teamList = JsonConvert.DeserializeObject<List<EventTeams.Team>>(wc.DownloadString(url));
+				}
+			}
+			catch (Exception webError)
+			{
+				Console.WriteLine("Error Message: " + webError.Message);
+			}
+
+			return teamList.ToArray();
+		}
+	}
 }
