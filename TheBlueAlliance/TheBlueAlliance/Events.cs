@@ -1,66 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using Newtonsoft.Json;
-using TheBlueAlliance.Models;
+
 using TheBlueAlliance.Models.MainModels;
-using TheBlueAlliance.Properties;
+using TheBlueAlliance.Models.SpecificModels;
 
 namespace TheBlueAlliance
 {
 	public class Events
 	{
-		#region Event Information
-		/// <summary>
-		///     Provides information for an event
-		/// </summary>
-		/// <param name="eventKey"></param>
-		/// <returns></returns>
+		private static ApiRequest _eventInformationRequest;
 		public static Event GetEventInformation(string eventKey)
 		{
-			return GetEventInformationJson(eventKey) != null ? JsonConvert.DeserializeObject<Event>(GetEventInformationJson(eventKey)) : null;
-		}
-
-		private static string GetEventInformationJson(string eventKey)
-		{
-			var url = Constants.GetRequestUrl($"/event/{eventKey}");
-
-			try
+			if (_eventInformationRequest == null)
 			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					var downloadedData = wc.DownloadString(url);
-
-					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" +
-									eventKey + ".json"))
-					{
-						File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" +
-									eventKey + ".json");
-					}
-
-					Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory +
-											  "\\Cache\\TBA\\Events\\EventInformation\\");
-					File.WriteAllText(
-						AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey +
-						".json", downloadedData);
-					return downloadedData;
-				}
+				_eventInformationRequest = new ApiRequest($"/event/{eventKey}");
 			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
-				return GetEventInformationCachedJson(eventKey);
-			}
-		}
 
-		private static string GetEventInformationCachedJson(string eventKey)
-		{
-			return File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey + ".json") ? File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" + eventKey + ".json") : null;
+			var response = _eventInformationRequest.GetData<Event>();
+			return response;
 		}
-		#endregion
 
 		private static ApiRequest _eventAwardsRequest;
 		public static Award[] GetEventAwards(string eventKey)
@@ -74,113 +32,83 @@ namespace TheBlueAlliance
 			return response.ToArray();
 		}
 
+		private static ApiRequest _eventMatchesRequest;
 		public static Match[] GetEventMatches(string eventKey)
 		{
-			var dataList = new List<Match>();
-			var eventMatchesToReturn = dataList.ToArray();
-			var url = Constants.GetRequestUrl($"/event/{eventKey}/matches");
-		
-			try
+			if (_eventMatchesRequest == null)
 			{
-				var req = new ApiRequest($"/event/{eventKey}/matches");
-				eventMatchesToReturn = req.GetData<Match[]>();
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					dataList = JsonConvert.DeserializeObject<List<Match>>(wc.DownloadString(url));
-					eventMatchesToReturn = dataList.ToArray();
-				}
-			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
+				_eventMatchesRequest = new ApiRequest($"/event/{eventKey}/matches");
 			}
 
-			return eventMatchesToReturn;
+			var response = _eventMatchesRequest.GetData<Match[]>();
+			return response.ToArray();
 		}
 
-		public static EventRankings.Team[] GetEventRankings(string eventKey)
+		private static ApiRequest _eventRankingsRequest;
+		public static Ranking2019[] GetEventRankings(string eventKey)
 		{
-			var teamList = new List<EventRankings.Team>();
-			var dataList = new List<List<object>>();
-			var url = Constants.GetRequestUrl($"/event/{eventKey}/rankings");
+			var teamList = new List<Ranking2019>();
 
-			try
+			if (_eventRankingsRequest == null)
 			{
-				using (var wc = new WebClient())
+				_eventRankingsRequest = new ApiRequest($"/event/{eventKey}/rankings");
+			}
+
+			var response = _eventRankingsRequest.GetData<RawRanking>();
+
+			var sortOrderInfo = response.sort_order_info.ToArray();
+
+			foreach (var ranking in response.rankings)
+			{
+				var gameSpecifics = new List<Ranking2019.Game_Specific>();
+				gameSpecifics.AddRange(sortOrderInfo.Select((t, i2) => new Ranking2019.Game_Specific { name = t.name, precision = t.precision, value = ranking.sort_orders[i2] }));
+
+				var teamToAdd = new Ranking2019
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					dataList = JsonConvert.DeserializeObject<List<List<object>>>(wc.DownloadString(url));
-				}
+					rank = ranking.rank,
+					team_key = ranking.team_key,
+					dq = ranking.dq,
+					record = ranking.record,
+					matches_played = ranking.matches_played,
+					ranking_score = GetGameSpecificValue(gameSpecifics, "Ranking Score"),
+					cargo = (int)GetGameSpecificValue(gameSpecifics, "Cargo"),
+					hatch_panel = (int)GetGameSpecificValue(gameSpecifics, "Hatch Panel"),
+					hab_climb = (int)GetGameSpecificValue(gameSpecifics, "HAB Climb"),
+					sandstorm_bonus = (int)GetGameSpecificValue(gameSpecifics, "Sandstorm Bonus")
+				};
+				teamList.Add(teamToAdd);
 			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
-			}
-			finally
-			{
-				for (var i = 1; i < dataList.Count; i++)
-				{
-					var teamToAdd = new EventRankings.Team
-					{
-						Rank = Convert.ToInt32(dataList.ToArray()[i][0]),
-						Team_Number = Convert.ToInt32(dataList.ToArray()[i][1]),
-						Qual_Average = Convert.ToDouble(dataList.ToArray()[i][2]),
-						Auto = Convert.ToInt32(dataList.ToArray()[i][3]),
-						Container = Convert.ToInt32(dataList.ToArray()[i][4]),
-						Coopertition = Convert.ToInt32(dataList.ToArray()[i][5]),
-						Litter = Convert.ToInt32(dataList.ToArray()[i][6]),
-						Tote = Convert.ToInt32(dataList.ToArray()[i][7]),
-						Played = Convert.ToInt32(dataList.ToArray()[i][8])
-					};
-					teamList.Add(teamToAdd);
-				}
-			}
+
 			return teamList.ToArray();
 		}
 
+		private static double GetGameSpecificValue(IEnumerable<Ranking2019.Game_Specific> specifics, string name)
+		{
+			return specifics.First(x => x.name.Equals(name)).value;
+		}
+
+		private static ApiRequest _eventsRequest;
 		public static Event[] GetEvents(int year)
 		{
-			var dataList = new List<Event>();
-			var url = Constants.GetRequestUrl($"/events/{year}");
-
-			try
+			if (_eventsRequest == null)
 			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					dataList = JsonConvert.DeserializeObject<List<Event>>(wc.DownloadString(url));
-				}
-			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
+				_eventsRequest = new ApiRequest($"/events/{year}");
 			}
 
-			return dataList.ToArray();
+			var response = _eventsRequest.GetData<List<Event>>();
+			return response.ToArray();
 		}
 
-		public static EventTeams.Team[] GetEventTeamsList(string eventKey)
+		private static ApiRequest _eventTeamsRequest;
+		public static Team[] GetEventTeamsList(string eventKey)
 		{
-			var teamList = new List<EventTeams.Team>();
-
-			var path = $"/event/{eventKey}/teams";
-			var url = Constants.GetRequestUrl($"/event/{eventKey}/teams");
-
-			try
+			if (_eventTeamsRequest == null)
 			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					teamList = JsonConvert.DeserializeObject<List<EventTeams.Team>>(wc.DownloadString(url));
-				}
-			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
+				_eventTeamsRequest = new ApiRequest($"/event/{eventKey}/teams");
 			}
 
-			return teamList.ToArray();
+			var response = _eventTeamsRequest.GetData<List<Team>>();
+			return response.ToArray();
 		}
 	}
 }

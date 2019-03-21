@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TheBlueAlliance.Tests
 {
@@ -49,7 +50,7 @@ namespace TheBlueAlliance.Tests
         [TestMethod]
         public void GetEventAwards_TestMethod()
         {
-            var actualAwardsInformation = Events.GetEventAwardsOld("2019gaalb");
+            var actualAwardsInformation = Events.GetEventAwards("2019gaalb");
 
             var actualEventKey = actualAwardsInformation[0].event_key;
             var actualAwardType = actualAwardsInformation[0].award_type;
@@ -102,26 +103,28 @@ namespace TheBlueAlliance.Tests
         {
             var actualEventRankings = Events.GetEventRankings("2019gaalb");
 
-            const int expectedRank = 1;
-            const int expectedTeam = 2056;
-            const double expectedQualAverage = 124.5;
-            const int expectedAuto = 146;
-            const int expectedContainer = 488;
-            const int expectedCoopertition = 160;
-            const int expectedLitter = 131;
-            const int expectedTote = 338;
-            const int expectedPlayed = 10;
+			var teamRankings = actualEventRankings.First(x => x.team_key.Equals("frc832"));
 
-            Assert.AreEqual(expectedRank, actualEventRankings[0].Rank, "Ranks are not as expected");
-            Assert.AreEqual(expectedTeam, actualEventRankings[0].Team_Number, "Team Numbers are not as expected");
-            Assert.AreEqual(expectedQualAverage, actualEventRankings[0].Qual_Average, "Qualification Averages are not as expected");
-            Assert.AreEqual(expectedAuto, actualEventRankings[0].Auto, "Auto Points are not as expected");
-            Assert.AreEqual(expectedContainer, actualEventRankings[0].Container, "Container Points are not as expected");
-            Assert.AreEqual(expectedCoopertition, actualEventRankings[0].Coopertition, "Coopertition Points are not as expected");
-            Assert.AreEqual(expectedLitter, actualEventRankings[0].Litter, "Litter Points are not as expected");
-            Assert.AreEqual(expectedTote, actualEventRankings[0].Tote, "Tote Points are not as expected");
-            Assert.AreEqual(expectedPlayed, actualEventRankings[0].Played, "Matches Played are not as expected");
-        }
+            const int expectedRank = 1;
+			const double expectedRankingScore = 2.58;
+            const string expectedTeam = "frc832";
+			const int expectedCargo = 228;
+			const int expectedHatchPanel = 54;
+			const int expectedHabClimb = 189;
+            const int expectedSandstorm = 114;
+            const int expectedPlayed = 12;
+			const int expectedDq = 0;
+
+			Assert.AreEqual(expectedRank, teamRankings.rank, "Rank are not as expected");
+			Assert.AreEqual(expectedRankingScore, teamRankings.ranking_score, "Ranking Score are not as expected");
+            Assert.AreEqual(expectedTeam, teamRankings.team_key, "Team Numbers are not as expected");
+            Assert.AreEqual(expectedCargo, teamRankings.cargo, "Cargo are not as expected");
+			Assert.AreEqual(expectedHatchPanel, teamRankings.hatch_panel, "Hatch Panel are not as expected");
+			Assert.AreEqual(expectedHabClimb, teamRankings.hab_climb, "HAB Climb are not as expected");
+			Assert.AreEqual(expectedSandstorm, teamRankings.sandstorm_bonus, "Sandstorm Bonus are not as expected");
+			Assert.AreEqual(expectedPlayed, teamRankings.matches_played, "Matches Played are not as expected");
+			Assert.AreEqual(expectedDq, teamRankings.dq, "DQ are not as expected");
+		}
 
         [TestMethod]
         public void GetEvents_TestMethod()
@@ -165,27 +168,28 @@ namespace TheBlueAlliance.Tests
         [TestMethod]
         public void GetEventTeamsList_TestMethod()
         {
-            var actualTeamList = Events.GetEventTeamsList("2015onto");
-            var expectedWebsite = "http://www.cyberfalcons.com";
-            var expectedTeamName = "Novelis  / Limestone Learning Foundation  / Queen's University / Transformix Engineering / Haakon Industries & Frontenac Secondary School";
-            var expectedLocality = "Kingston";
-            var expectedRookieYear = 2011;
-            var expectedRegion = "Ontario";
-            var expectedTeamNumber = 3710;
-            var expectedLocation = "Kingston, Ontario, Canada";
-            var expectedKey = "frc3710";
-            var expectedCountryName = "Canada";
-            var expectedNickName = "FSS Cyber Falcons";
-            Assert.AreEqual(expectedWebsite, actualTeamList[20].website, "Team websites are not as expected!");
-            Assert.AreEqual(expectedTeamName, actualTeamList[20].name, "Team names are not as expected!");
-            Assert.AreEqual(expectedLocality, actualTeamList[20].locality, "Localities are not as expected!");
-            Assert.AreEqual(expectedRookieYear, actualTeamList[20].rookie_year, "Rookie years are not as expected!");
-            Assert.AreEqual(expectedRegion, actualTeamList[20].region, "Regions are not as expected!");
-            Assert.AreEqual(expectedTeamNumber, actualTeamList[20].team_number, "Team numbers are not as expected!");
-            Assert.AreEqual(expectedLocation, actualTeamList[20].location, "Locations are not as expected!");
-            Assert.AreEqual(expectedKey, actualTeamList[20].key, "Keys are not as expected!");
-            Assert.AreEqual(expectedCountryName, actualTeamList[20].country_name, "Country names are not as expected!");
-            Assert.AreEqual(expectedNickName, actualTeamList[20].nickname, "Nicknames are not as expected!");
+            var actualTeamList = Events.GetEventTeamsList("2019gaalb");
+
+			var team = actualTeamList.First(x => x.key.Equals("frc832"));
+
+            const string expectedWebsite = "http://www.roswellrobotics.com";
+            const string expectedTeamName = @"GE Volunteers/Siemens/Rockwell Automation/Dow Chemical/Arconic Foundation/Kennesaw State University/Novelis/Fulton County Schools&Roswell High School";
+			const string expectedMotto = "Outstanding Students Creating Awesome Robots";
+			const int expectedRookieYear = 2002;
+			const string expectedCity = "Roswell";
+			const string expectedState = "Georgia";
+            const int expectedTeamNumber = 832;
+            const string expectedCountry = "USA";
+            const string expectedNickName = "Oscar";
+            Assert.AreEqual(expectedWebsite, team.website, "Team websites are not as expected!");
+            Assert.AreEqual(expectedTeamName, team.name, "Team names are not as expected!");
+            Assert.AreEqual(expectedRookieYear, team.rookie_year, "Rookie years are not as expected!");
+			Assert.AreEqual(expectedMotto, team.motto, "Motto are not as expected!");
+			Assert.AreEqual(expectedCity, team.city, "City are not as expected!");
+			Assert.AreEqual(expectedState, team.state_prov, @"State/Province are not as expected!");
+            Assert.AreEqual(expectedTeamNumber, team.team_number, "Team numbers are not as expected!");
+            Assert.AreEqual(expectedCountry, team.country, "Country names are not as expected!");
+            Assert.AreEqual(expectedNickName, team.nickname, "Nicknames are not as expected!");
         }
     }
 }
