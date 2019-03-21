@@ -2,9 +2,9 @@
 
 namespace TheBlueAlliance.Models.SpecificModels
 {
-	public class Match_2019 : Match
+	public class Match2019 : Match
 	{
-		public class Score : Match.Score
+		public new sealed class Score : Match.Score
 		{
 			public int sandstormPoints   { get; set; }
 			public int autoHatchPanels   { get; set; }

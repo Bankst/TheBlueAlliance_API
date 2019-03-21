@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using TheBlueAlliance.Models;
@@ -14,90 +15,46 @@ namespace TheBlueAlliance
 
 		public static Award[] GetTeamEventAwards(string teamKey, string eventKey)
         {
-			var teamEventAwardsToReturn = new List<Award>();
-			var url = Constants.GetRequestUrl($"/team/{teamKey}/event/{eventKey}/awards");
+			var request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards");
+			var response = request.GetData<Award[]>().ToArray();
+			return response;
+        }
 
-			try
-			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
-					teamEventAwardsToReturn = JsonConvert.DeserializeObject<List<Award>>(wc.DownloadString(url));
-				}
-			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamEventAwardsToReturn.ToArray();
-		}
-
-        public static Match_2019[] GetTeamEventMatches2019(string teamKey, string eventKey)
+		private static ApiRequest _teamEventMatches2019Request;
+        public static Match2019[] GetTeamEventMatches2019(string teamKey, string eventKey)
         {
             if (eventKey.Substring(0, 4) != "2019")
             {
                 return null;
             }
-
-            var teamEventMatchesToReturn = new List<Match_2019>();
-			var url = Constants.GetRequestUrl($"/team/{teamKey}/event/{eventKey}/matches");
 			
-			try
-            {
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
-					teamEventMatchesToReturn = JsonConvert.DeserializeObject<List<Match_2019>>(wc.DownloadString(url));
-				}
-			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamEventMatchesToReturn.ToArray();
+            _teamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches");
+            var response = _teamEventMatches2019Request.GetData<Match2019[]>();
+            return response.ToArray();
         }
 
-        public static TeamEvents.Event[] GetTeamEvents(string teamKey, int year)
+        private static ApiRequest _teamEventsRequest;
+        public static Event[] GetTeamEvents(string teamKey, int year)
         {
-            var teamEventsToReturn = new List<TeamEvents.Event>();
-
-			var url = Constants.GetRequestUrl($"/team/{teamKey}/events/{year}");
-
-			try
-			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
-					teamEventsToReturn = JsonConvert.DeserializeObject<List<TeamEvents.Event>>(wc.DownloadString(url));
-				}
+			if (_teamEventsRequest == null)
+			{ 
+				_teamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}");
 			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamEventsToReturn.ToArray();
+			var response = _teamEventsRequest.GetData<Event[]>();
+			return response.ToArray();
         }
 
+
+		private static ApiRequest _teamHistoricalAwardsRequest;
         public static Award[] GetTeamHistoricalAwards(string teamKey)
         {
-            var teamHistoricalAwardsToReturn = new List<Award>();
-
-			var url = Constants.GetRequestUrl($"/team/{teamKey}/awards");
-			
-			try
-            {
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
-					teamHistoricalAwardsToReturn = JsonConvert.DeserializeObject<List<Award>>(wc.DownloadString(url));
-				}
-			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamHistoricalAwardsToReturn.ToArray();
-        }
+	        if (_teamHistoricalAwardsRequest == null)
+	        {
+		        _teamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards");
+	        }
+	        var response = _teamHistoricalAwardsRequest.GetData<Award[]>();
+	        return response.ToArray();
+		}
 
         public static Event[] GetTeamHistoryEvents(string teamKey)
         {
@@ -110,7 +67,7 @@ namespace TheBlueAlliance
             {
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					teamHistoricalEventsToReturn = JsonConvert.DeserializeObject<List<Event>>(wc.DownloadString(url));
 				}
 			}
@@ -137,7 +94,7 @@ namespace TheBlueAlliance
             {
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					teamInformationToReturn = JsonConvert.DeserializeObject<TeamInformation>(wc.DownloadString(url));
 
 				}
@@ -159,7 +116,7 @@ namespace TheBlueAlliance
             {
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					teamMediaLocationsToReturn = JsonConvert.DeserializeObject<List<TeamMedia.MediaLocation>>(wc.DownloadString(url));
 				}
 			}

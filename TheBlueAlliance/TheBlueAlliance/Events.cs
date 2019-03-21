@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using Newtonsoft.Json;
 using TheBlueAlliance.Models;
 using TheBlueAlliance.Models.MainModels;
@@ -25,14 +24,13 @@ namespace TheBlueAlliance
 
 		private static string GetEventInformationJson(string eventKey)
 		{
-			var path = $"/event/{eventKey}";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = Constants.GetRequestUrl($"/event/{eventKey}");
 
 			try
 			{
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					var downloadedData = wc.DownloadString(url);
 
 					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventInformation\\" +
@@ -72,13 +70,22 @@ namespace TheBlueAlliance
 		private static string GetEventAwardsJson(string eventKey)
 		{
 			var path = $"/event/{eventKey}/awards";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = $"{ApiRequest.ApiUrl}{path}";
+
+			try
+			{
+
+			}
+			catch
+			{
+
+			}
 
 			try
 			{
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					var downloadedData = wc.DownloadString(url);
 					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json"))
 					{
@@ -106,15 +113,15 @@ namespace TheBlueAlliance
 		{
 			var dataList = new List<EventMatches.Match>();
 			var eventMatchesToReturn = dataList.ToArray();
-
-			var path = $"/event/{eventKey}/matches";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = Constants.GetRequestUrl($"/event/{eventKey}/matches");
 
 			try
 			{
+				var req = new ApiRequest($"/event/{eventKey}/matches");
+				eventMatchesToReturn = req.GetData<List<EventMatches.Match>>().Result.ToArray();
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					dataList = JsonConvert.DeserializeObject<List<EventMatches.Match>>(wc.DownloadString(url));
 					eventMatchesToReturn = dataList.ToArray();
 				}
@@ -131,15 +138,13 @@ namespace TheBlueAlliance
 		{
 			var teamList = new List<EventRankings.Team>();
 			var dataList = new List<List<object>>();
-
-			var path = $"/event/{eventKey}/rankings";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = Constants.GetRequestUrl($"/event/{eventKey}/rankings");
 
 			try
 			{
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					dataList = JsonConvert.DeserializeObject<List<List<object>>>(wc.DownloadString(url));
 				}
 			}
@@ -172,15 +177,13 @@ namespace TheBlueAlliance
 		public static Event[] GetEvents(int year)
 		{
 			var dataList = new List<Event>();
-
-			var path = $"/events/{year}";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = Constants.GetRequestUrl($"/events/{year}");
 
 			try
 			{
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					dataList = JsonConvert.DeserializeObject<List<Event>>(wc.DownloadString(url));
 				}
 			}
@@ -197,13 +200,13 @@ namespace TheBlueAlliance
 			var teamList = new List<EventTeams.Team>();
 
 			var path = $"/event/{eventKey}/teams";
-			var url = $"{Constants.ApiUrl}{path}";
+			var url = Constants.GetRequestUrl($"/event/{eventKey}/teams");
 
 			try
 			{
 				using (var wc = new WebClient())
 				{
-					wc.Headers.Add("X-TBA-Auth-Key", Settings.Default.AuthKey);
+					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
 					teamList = JsonConvert.DeserializeObject<List<EventTeams.Team>>(wc.DownloadString(url));
 				}
 			}

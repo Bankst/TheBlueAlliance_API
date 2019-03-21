@@ -1,18 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBlueAlliance", "TheBlueAlliance\TheBlueAlliance\TheBlueAlliance.csproj", "{BCF41EB6-E78B-4C15-9415-F1860F3B90FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBlueAlliance.Tests", "TheBlueAlliance\TheBlueAlliance.Tests\TheBlueAlliance.Tests.csproj", "{742593B4-96B4-475D-8BC8-1822ED3D67ED}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F0D0A0FB-5028-49A2-A50E-49B6492F145F}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchDataDownloader", "MatchDataDownloader\MatchDataDownloader.csproj", "{57E0F6A2-70C3-4F5D-BD99-5B99F180F094}"
 EndProject
@@ -37,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94331883-5EF9-4CF6-B77E-6DDD40628884}
 	EndGlobalSection
 EndGlobal
