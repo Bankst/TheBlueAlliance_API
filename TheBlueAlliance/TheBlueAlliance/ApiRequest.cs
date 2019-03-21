@@ -57,7 +57,7 @@ namespace TheBlueAlliance
 							case 200:
 								var stringData = await GetResponseData(resp);
 								obj = GetObject<T>(stringData);
-								CacheData<T>(stringData);
+								CacheData(stringData);
 								break;
 							case 304:
 								obj = GetCachedData<T>();
@@ -92,7 +92,7 @@ namespace TheBlueAlliance
 			return File.Exists(path) ? File.ReadAllText(path) : null;
 		}
 
-		private void CacheData<T>(string rawData)
+		private void CacheData(string rawData)
 		{
 			var path = Path.Combine(CacheRoot, _path);
 			var filePath = Path.Combine(path, ".json");
@@ -111,7 +111,7 @@ namespace TheBlueAlliance
 			return JsonConvert.DeserializeObject<T>(data);
 		}
 
-		private async Task<string> GetResponseData(HttpResponseMessage msg)
+		private static async Task<string> GetResponseData(HttpResponseMessage msg)
 		{
 			var buffer = await msg.Content.ReadAsByteArrayAsync();
 			var byteArray = buffer.ToArray();

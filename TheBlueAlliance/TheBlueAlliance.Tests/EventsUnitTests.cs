@@ -49,7 +49,7 @@ namespace TheBlueAlliance.Tests
         [TestMethod]
         public void GetEventAwards_TestMethod()
         {
-            var actualAwardsInformation = Events.GetEventAwards("2019gaalb");
+            var actualAwardsInformation = Events.GetEventAwardsOld("2019gaalb");
 
             var actualEventKey = actualAwardsInformation[0].event_key;
             var actualAwardType = actualAwardsInformation[0].award_type;

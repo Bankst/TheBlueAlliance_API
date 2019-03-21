@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using TheBlueAlliance.Models;
@@ -61,68 +62,32 @@ namespace TheBlueAlliance
 		}
 		#endregion
 
-		#region Event Awards
-		public static EventAwards.Award[] GetEventAwards(string eventKey)
+		private static ApiRequest _eventAwardsRequest;
+		public static Award[] GetEventAwards(string eventKey)
 		{
-			return GetEventAwardsJson(eventKey) != null ? JsonConvert.DeserializeObject<List<EventAwards.Award>>(GetEventAwardsJson(eventKey)).ToArray() : null;
+			if (_eventAwardsRequest == null)
+			{
+				_eventAwardsRequest = new ApiRequest($"/event/{eventKey}/awards");
+			}
+
+			var response = _eventAwardsRequest.GetData<Award[]>();
+			return response.ToArray();
 		}
 
-		private static string GetEventAwardsJson(string eventKey)
+		public static Match[] GetEventMatches(string eventKey)
 		{
-			var path = $"/event/{eventKey}/awards";
-			var url = $"{ApiRequest.ApiUrl}{path}";
-
-			try
-			{
-
-			}
-			catch
-			{
-
-			}
-
-			try
-			{
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					var downloadedData = wc.DownloadString(url);
-					if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json"))
-					{
-						File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json");
-					}
-					Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\");
-					File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json", downloadedData);
-					return downloadedData;
-				}
-			}
-			catch (Exception webError)
-			{
-				Console.WriteLine("Error Message: " + webError.Message);
-				return GetEventAwardsCachedJson(eventKey);
-			}
-		}
-
-		private static string GetEventAwardsCachedJson(string eventKey)
-		{
-			return File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json") ? File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\Cache\\TBA\\Events\\EventAwards\\" + eventKey + ".json") : null;
-		}
-		#endregion
-
-		public static EventMatches.Match[] GetEventMatches(string eventKey)
-		{
-			var dataList = new List<EventMatches.Match>();
+			var dataList = new List<Match>();
 			var eventMatchesToReturn = dataList.ToArray();
 			var url = Constants.GetRequestUrl($"/event/{eventKey}/matches");
-
+		
 			try
 			{
 				var req = new ApiRequest($"/event/{eventKey}/matches");
-				eventMatchesToReturn = req.GetData<List<EventMatches.Match>>().Result.ToArray();
+				eventMatchesToReturn = req.GetData<Match[]>();
 				using (var wc = new WebClient())
 				{
 					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					dataList = JsonConvert.DeserializeObject<List<EventMatches.Match>>(wc.DownloadString(url));
+					dataList = JsonConvert.DeserializeObject<List<Match>>(wc.DownloadString(url));
 					eventMatchesToReturn = dataList.ToArray();
 				}
 			}
