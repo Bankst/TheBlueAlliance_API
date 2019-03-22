@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace TheBlueAlliance
 {
@@ -18,9 +20,13 @@ namespace TheBlueAlliance
 
 		private readonly string _path;
 		private readonly string _cacheFolder;
-		private readonly string _cacheFilename;
+		private readonly string _cacheFullPath;
 
-		private string LastModified;
+		public string LastModified { get; private set; }
+
+		public bool ShouldCheckCache { get; set; } = true;
+		public bool HasCached { get; private set; }
+		public bool HasHitCache { get; private set; }
 
 		public ApiRequest(string path)
 		{
@@ -29,20 +35,29 @@ namespace TheBlueAlliance
 			var split = _path.Split('/');
 			var fileFolder = string.Join(@"/", split.Take(split.Length - 1));
 
+			var cacheFilename = $"{split.Last()}.json";
 			_cacheFolder = $"{CacheRoot}{fileFolder.Replace(@"/", @"\")}";
-			_cacheFilename = $"{split.Last()}.json";
+			_cacheFullPath = Path.Combine(_cacheFolder, cacheFilename);
 		}
 
-		public T GetData<T>()
+		private static readonly JsonSerializerSettings DeserializerSettings = new JsonSerializerSettings()
 		{
-			return GetDataAsync<T>().Result;
-		}
+			ContractResolver = new CamelCasePropertyNamesContractResolver()
+		};
+
+		public T GetData<T>() => GetDataAsync<T>().Result;
 
 		public async Task<T> GetDataAsync<T>()
 		{
 			T obj = default;
 			try
 			{
+				if (CacheExists() && ShouldCheckCache)
+				{
+					HasHitCache = true;
+					return GetCachedData<T>();
+				}
+
 				using (var wc = new HttpClient())
 				using (var req = new HttpRequestMessage(HttpMethod.Get, $"{ApiUrl}{_path}"))
 				{
@@ -54,7 +69,8 @@ namespace TheBlueAlliance
 					
 					using (var resp = await wc.SendAsync(req))
 					{
-						if (resp.Headers.TryGetValues("Last-Modified", out var lastModified))
+
+						if (resp.Content.Headers.TryGetValues("Last-Modified", out var lastModified))
 						{
 							LastModified = lastModified.First();
 						}
@@ -64,13 +80,13 @@ namespace TheBlueAlliance
 							case 200:
 								var stringData = await GetResponseData(resp);
 								obj = GetObject<T>(stringData);
-								CacheData(stringData);
+								HasCached = CacheData(stringData);
 								break;
 							case 304:
 								obj = GetCachedData<T>();
 								break;
 							case 401:
-								// shit
+								// hecc
 								break;
 						}
 					}
@@ -86,32 +102,39 @@ namespace TheBlueAlliance
 			return obj;
 		}
 
-		private T GetCachedData<T>() => GetObject<T>(GetCachedJson());
-
-		private string GetCachedJson()
+		private T GetCachedData<T>()
 		{
-			var path = Path.Combine(CacheRoot, _path, ".json");
-			return File.Exists(path) ? File.ReadAllText(path) : null;
+			HasHitCache = true;
+			return GetObject<T>(GetCachedJson());
 		}
 
-		private void CacheData(string rawData)
-		{
-			var fullPath = Path.Combine(_cacheFolder, _cacheFilename);
+		private string GetCachedJson() => File.Exists(_cacheFullPath) ? File.ReadAllText(_cacheFullPath) : null;
 
-			if (File.Exists(fullPath))
+		public bool CacheExists() => File.Exists(_cacheFullPath);
+
+		private bool CacheData(string rawData)
+		{
+			try
 			{
-				File.Delete(fullPath);
+				if (File.Exists(_cacheFullPath))
+				{
+					File.Delete(_cacheFullPath);
+				}
+
+				Directory.CreateDirectory(_cacheFolder);
+
+				File.WriteAllText(_cacheFullPath, rawData);
+				return true;
 			}
-
-			Directory.CreateDirectory(_cacheFolder);
-
-			File.WriteAllText(fullPath, rawData);
+			catch(Exception ex)
+			{
+				Console.WriteLine($"Failed to cache response:\n {ex.Message}");
+				return false;
+			}
+			
 		}
 
-		private static T GetObject<T>(string data)
-		{
-			return JsonConvert.DeserializeObject<T>(data);
-		}
+		private static T GetObject<T>(string data) => JsonConvert.DeserializeObject<T>(data, DeserializerSettings);
 
 		private static async Task<string> GetResponseData(HttpResponseMessage msg)
 		{
@@ -119,6 +142,34 @@ namespace TheBlueAlliance
 			var byteArray = buffer.ToArray();
 			var stringData = Encoding.UTF8.GetString(buffer.ToArray(), 0, byteArray.Length);
 			return stringData;
+		}
+
+		public bool ClearCache()
+		{
+			try
+			{
+				if (!File.Exists(_cacheFullPath)) return true;
+				File.Delete(_cacheFullPath);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public static bool ClearEntireCache()
+		{
+			try
+			{
+				if (!Directory.Exists(CacheRoot)) return true;
+				Directory.Delete(CacheRoot, true);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 	}
 }

@@ -8,97 +8,114 @@ namespace TheBlueAlliance
 	public class Teams
 	{
 
-		private static ApiRequest _teamEventAwardsRequest;
-		public static Award[] GetTeamEventAwards(string teamKey, string eventKey)
+
+
+		public static ApiRequest TeamEventAwardsRequest { get; private set; }
+		public static Award[] GetTeamEventAwards(string teamKey, string eventKey, bool checkCache = true)
 		{
-			if (_teamEventAwardsRequest == null)
+			if (TeamEventAwardsRequest == null)
 			{
-				_teamEventAwardsRequest = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards");
+				TeamEventAwardsRequest = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards")
+				{
+					ShouldCheckCache = checkCache
+				};
 			}
-			var response = _teamEventAwardsRequest.GetData<Award[]>();
+			var response = TeamEventAwardsRequest.GetData<Award[]>();
 			return response.ToArray();
 		}
 
-		private static ApiRequest _teamEventMatches2019Request;
-		public static Match2019[] GetTeamEventMatches2019(string teamKey, string eventKey)
+		public static ApiRequest TeamEventMatches2019Request { get; private set; }
+		public static Match2019[] GetTeamEventMatches2019(string teamKey, string eventKey, bool checkCache = true)
 		{
 			if (eventKey.Substring(0, 4) != "2019")
 			{
 				return null;
 			}
 
-			if (_teamEventMatches2019Request == null)
+			if (TeamEventMatches2019Request == null)
 			{
-				_teamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches");
+				TeamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches")
+				{
+					ShouldCheckCache = checkCache
+				};
 			}
 
-			var response = _teamEventMatches2019Request.GetData<Match2019[]>();
+			var response = TeamEventMatches2019Request.GetData<Match2019[]>();
 			return response.ToArray();
 		}
 
-		private static ApiRequest _teamEventsRequest;
-		public static Event[] GetTeamEvents(string teamKey, int year)
+		public static ApiRequest TeamEventsRequest { get; private set; }
+		public static Event[] GetTeamEvents(string teamKey, int year, bool checkCache = true)
 		{
-			if (_teamEventsRequest == null)
+			if (TeamEventsRequest == null)
 			{
-				_teamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}");
+				TeamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}")
+				{
+					ShouldCheckCache = checkCache
+				};
 			}
-			var response = _teamEventsRequest.GetData<Event[]>();
-			return response.ToArray();
-		}
-
-
-		private static ApiRequest _teamHistoricalAwardsRequest;
-		public static Award[] GetTeamHistoricalAwards(string teamKey)
-		{
-			if (_teamHistoricalAwardsRequest == null)
-			{
-				_teamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards");
-			}
-			var response = _teamHistoricalAwardsRequest.GetData<Award[]>();
-			return response.ToArray();
-		}
-
-		private static ApiRequest _teamHistoryRequest;
-		public static Event[] GetTeamHistoryEvents(string teamKey)
-		{
-			if (_teamHistoryRequest == null)
-			{
-				_teamHistoryRequest = new ApiRequest($"/team/{teamKey}/events");
-			}
-
-			var response = _teamHistoryRequest.GetData<List<Event>>();
+			var response = TeamEventsRequest.GetData<Event[]>();
 			return response.ToArray();
 		}
 
 
-		private static ApiRequest _teamInformationRequest;
-		/// <summary>
-		///     Provides general information for any FRC team
-		///     teamKey Format Example : "frc3710"
-		/// </summary>
-		/// <param name="teamKey"></param>
-		/// <returns></returns>
-		public static Team GetTeamInformation(string teamKey)
+		public static ApiRequest TeamHistoricalAwardsRequest { get; private set; }
+		public static Award[] GetTeamHistoricalAwards(string teamKey, bool checkCache = true)
 		{
-			if (_teamInformationRequest == null)
+			if (TeamHistoricalAwardsRequest == null)
 			{
-				_teamInformationRequest = new ApiRequest($"/team/{teamKey}");
+				TeamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards")
+				{
+					ShouldCheckCache = checkCache
+				};
+			}
+			var response = TeamHistoricalAwardsRequest.GetData<Award[]>();
+			return response.ToArray();
+		}
+
+		public static ApiRequest TeamHistoryRequest { get; private set; }
+		public static Event[] GetTeamHistoryEvents(string teamKey, bool checkCache = true)
+		{
+			if (TeamHistoryRequest == null)
+			{
+				TeamHistoryRequest = new ApiRequest($"/team/{teamKey}/events")
+				{
+					ShouldCheckCache = checkCache
+				};
 			}
 
-			var response = _teamInformationRequest.GetData<Team>();
+			var response = TeamHistoryRequest.GetData<List<Event>>();
+			return response.ToArray();
+		}
+
+
+		public static ApiRequest TeamInformationRequest { get; private set; }
+		public static Team GetTeamInformation(string teamKey, bool checkCache = true)
+		{
+			if (TeamInformationRequest == null)
+			{
+				TeamInformationRequest = new ApiRequest($"/team/{teamKey}")
+				{
+					ShouldCheckCache = checkCache
+				};
+			}
+
+			var response = TeamInformationRequest.GetData<Team>();
 			return response;
 		}
 
-		private static ApiRequest _teamMediaRequest;
-		public static Media[] GetTeamMedia(string teamKey, int year)
+		public static ApiRequest TeamMediaRequest { get; private set; }
+		public static Media[] GetTeamMedia(string teamKey, int year, bool checkCache = true)
 		{
-			if (_teamMediaRequest == null)
+			if (TeamMediaRequest == null)
 			{
-				_teamMediaRequest = new ApiRequest($"/team/{teamKey}/media/{year}");
+				TeamMediaRequest = new ApiRequest($"/team/{teamKey}/media/{year}")
+				{
+					ShouldCheckCache = checkCache
+				};
 			}
 
-			var response = _teamMediaRequest.GetData<List<Media>>();
+			var response = TeamMediaRequest.GetData<List<Media>>();
 			return response.ToArray();
 		}
 	}

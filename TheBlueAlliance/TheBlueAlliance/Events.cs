@@ -32,14 +32,14 @@ namespace TheBlueAlliance
 		}
 
 		private static ApiRequest _eventMatchesRequest;
-		public static Match[] GetEventMatches(string eventKey)
+		public static Match2019[] GetEventMatches2019(string eventKey)
 		{
 			if (_eventMatchesRequest == null)
 			{
 				_eventMatchesRequest = new ApiRequest($"/event/{eventKey}/matches");
 			}
 
-			var response = _eventMatchesRequest.GetData<Match[]>();
+			var response = _eventMatchesRequest.GetData<Match2019[]>();
 			return response.ToArray();
 		}
 

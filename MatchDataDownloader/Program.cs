@@ -14,7 +14,7 @@ namespace MatchDataDownloader
 			var events = Events.GetEvents(2017);
 			foreach (var frcEvent in events)
 			{
-				var eventMatches = Events.GetEventMatches(frcEvent.key);
+				var eventMatches = Events.GetEventMatches2019(frcEvent.key);
 				foreach (var match in eventMatches)
 				{
 					// if (match.score_breakdown == null) continue;

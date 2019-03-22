@@ -1,4 +1,5 @@
-﻿using TheBlueAlliance.SpecificModels;
+﻿using TheBlueAlliance.MainModels;
+using TheBlueAlliance.SpecificModels;
 
 namespace TheBlueAlliance
 {
@@ -11,9 +12,9 @@ namespace TheBlueAlliance
 		    {
 				_matchRequest = new ApiRequest($"/match/{matchKey}");
 		    }
-
+			
 		    var response = _matchRequest.GetData<Match2019>();
-		    return response;
+			return response;
 	    }
     }
 }
