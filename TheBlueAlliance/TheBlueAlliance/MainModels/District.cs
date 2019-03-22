@@ -1,4 +1,4 @@
-﻿namespace TheBlueAlliance.Models.MainModels
+﻿namespace TheBlueAlliance.MainModels
 {
 	public class District
 	{

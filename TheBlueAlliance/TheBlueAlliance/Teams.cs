@@ -1,130 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using Newtonsoft.Json;
-using TheBlueAlliance.Models;
-using TheBlueAlliance.Models.MainModels;
-using TheBlueAlliance.Models.SpecificModels;
-using TheBlueAlliance.Properties;
+using TheBlueAlliance.MainModels;
+using TheBlueAlliance.SpecificModels;
 
 namespace TheBlueAlliance
 {
-    public class Teams
+	public class Teams
 	{
 
+		private static ApiRequest _teamEventAwardsRequest;
 		public static Award[] GetTeamEventAwards(string teamKey, string eventKey)
-        {
-			var request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards");
-			var response = request.GetData<Award[]>().ToArray();
-			return response;
-        }
+		{
+			if (_teamEventAwardsRequest == null)
+			{
+				_teamEventAwardsRequest = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards");
+			}
+			var response = _teamEventAwardsRequest.GetData<Award[]>();
+			return response.ToArray();
+		}
 
 		private static ApiRequest _teamEventMatches2019Request;
-        public static Match2019[] GetTeamEventMatches2019(string teamKey, string eventKey)
-        {
-            if (eventKey.Substring(0, 4) != "2019")
-            {
-                return null;
-            }
-			
-            _teamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches");
-            var response = _teamEventMatches2019Request.GetData<Match2019[]>();
-            return response.ToArray();
-        }
+		public static Match2019[] GetTeamEventMatches2019(string teamKey, string eventKey)
+		{
+			if (eventKey.Substring(0, 4) != "2019")
+			{
+				return null;
+			}
 
-        private static ApiRequest _teamEventsRequest;
-        public static Event[] GetTeamEvents(string teamKey, int year)
-        {
+			if (_teamEventMatches2019Request == null)
+			{
+				_teamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches");
+			}
+
+			var response = _teamEventMatches2019Request.GetData<Match2019[]>();
+			return response.ToArray();
+		}
+
+		private static ApiRequest _teamEventsRequest;
+		public static Event[] GetTeamEvents(string teamKey, int year)
+		{
 			if (_teamEventsRequest == null)
-			{ 
+			{
 				_teamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}");
 			}
 			var response = _teamEventsRequest.GetData<Event[]>();
 			return response.ToArray();
-        }
+		}
 
 
 		private static ApiRequest _teamHistoricalAwardsRequest;
-        public static Award[] GetTeamHistoricalAwards(string teamKey)
-        {
-	        if (_teamHistoricalAwardsRequest == null)
-	        {
-		        _teamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards");
-	        }
-	        var response = _teamHistoricalAwardsRequest.GetData<Award[]>();
-	        return response.ToArray();
+		public static Award[] GetTeamHistoricalAwards(string teamKey)
+		{
+			if (_teamHistoricalAwardsRequest == null)
+			{
+				_teamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards");
+			}
+			var response = _teamHistoricalAwardsRequest.GetData<Award[]>();
+			return response.ToArray();
 		}
 
-        public static Event[] GetTeamHistoryEvents(string teamKey)
-        {
-            var teamHistoricalEventsToReturn = new List<Event>();
-
-			var path = $"/team/{teamKey}/events";
-			var url = Constants.GetRequestUrl(path);
-			
-			try
-            {
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					teamHistoricalEventsToReturn = JsonConvert.DeserializeObject<List<Event>>(wc.DownloadString(url));
-				}
+		private static ApiRequest _teamHistoryRequest;
+		public static Event[] GetTeamHistoryEvents(string teamKey)
+		{
+			if (_teamHistoryRequest == null)
+			{
+				_teamHistoryRequest = new ApiRequest($"/team/{teamKey}/events");
 			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamHistoricalEventsToReturn.ToArray();
-        }
 
-        /// <summary>
-        ///     Provides general information for any FRC team
-        ///     teamKey Format Example : "frc3710"
-        /// </summary>
-        /// <param name="teamKey"></param>
-        /// <returns></returns>
-        public static TeamInformation GetTeamInformation(string teamKey)
-        {
-            var teamInformationToReturn = new TeamInformation();
+			var response = _teamHistoryRequest.GetData<List<Event>>();
+			return response.ToArray();
+		}
 
-			var url = Constants.GetRequestUrl($"/team/{teamKey}");
-			
-			try
-            {
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					teamInformationToReturn = JsonConvert.DeserializeObject<TeamInformation>(wc.DownloadString(url));
 
-				}
+		private static ApiRequest _teamInformationRequest;
+		/// <summary>
+		///     Provides general information for any FRC team
+		///     teamKey Format Example : "frc3710"
+		/// </summary>
+		/// <param name="teamKey"></param>
+		/// <returns></returns>
+		public static Team GetTeamInformation(string teamKey)
+		{
+			if (_teamInformationRequest == null)
+			{
+				_teamInformationRequest = new ApiRequest($"/team/{teamKey}");
 			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamInformationToReturn;
-        }
 
-        public static TeamMedia.MediaLocation[] GetTeamMediaLocations(string teamKey, int year)
-        {
-            var teamMediaLocationsToReturn = new List<TeamMedia.MediaLocation>();
+			var response = _teamInformationRequest.GetData<Team>();
+			return response;
+		}
 
-			var url = Constants.GetRequestUrl($"/team/{teamKey}/{year}/media");
-			
-			try
-            {
-				using (var wc = new WebClient())
-				{
-					wc.Headers.Add("X-TBA-Auth-Key", ApiRequest.ApiKey);
-					teamMediaLocationsToReturn = JsonConvert.DeserializeObject<List<TeamMedia.MediaLocation>>(wc.DownloadString(url));
-				}
+		private static ApiRequest _teamMediaRequest;
+		public static Media[] GetTeamMedia(string teamKey, int year)
+		{
+			if (_teamMediaRequest == null)
+			{
+				_teamMediaRequest = new ApiRequest($"/team/{teamKey}/media/{year}");
 			}
-            catch (Exception webError)
-            {
-                Console.WriteLine("Error Message: " + webError.Message);
-            }
-            return teamMediaLocationsToReturn.ToArray();
-        }
-    }
+
+			var response = _teamMediaRequest.GetData<List<Media>>();
+			return response.ToArray();
+		}
+	}
 }

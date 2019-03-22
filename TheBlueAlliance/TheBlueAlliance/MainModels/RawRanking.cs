@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TheBlueAlliance.Models.MainModels
+﻿namespace TheBlueAlliance.MainModels
 {
 	public class RawRanking
 	{

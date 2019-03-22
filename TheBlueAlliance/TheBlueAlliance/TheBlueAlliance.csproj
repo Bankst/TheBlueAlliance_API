@@ -52,25 +52,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRequest.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Matches.cs" />
-    <Compile Include="Models\Eventawards.cs" />
-    <Compile Include="Models\MainModels\Award.cs" />
-    <Compile Include="Models\MainModels\Match.cs" />
-    <Compile Include="Models\MainModels\Ranking.cs" />
-    <Compile Include="Models\MainModels\RawRanking.cs" />
-    <Compile Include="Models\MainModels\Team.cs" />
-    <Compile Include="Models\MatchInformation_2019.cs" />
-    <Compile Include="Models\MainModels\District.cs" />
-    <Compile Include="Models\MainModels\Event.cs" />
-    <Compile Include="Models\MainModels\Webcast.cs" />
-    <Compile Include="Models\SpecificModels\Match2019.cs" />
-    <Compile Include="Models\SpecificModels\Ranking2019.cs" />
-    <Compile Include="Models\TeamEventAwards.cs" />
-    <Compile Include="Models\TeamInformation.cs" />
-    <Compile Include="Models\TeamMedia.cs" />
-    <Compile Include="Models\TeamYearsParticipated.cs" />
+    <Compile Include="MainModels\Award.cs" />
+    <Compile Include="MainModels\Match.cs" />
+    <Compile Include="MainModels\Ranking.cs" />
+    <Compile Include="MainModels\RawRanking.cs" />
+    <Compile Include="MainModels\Team.cs" />
+    <Compile Include="MainModels\District.cs" />
+    <Compile Include="MainModels\Event.cs" />
+    <Compile Include="MainModels\Webcast.cs" />
+    <Compile Include="SpecificModels\Match2019.cs" />
+    <Compile Include="SpecificModels\Ranking2019.cs" />
+    <Compile Include="MainModels\Media.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

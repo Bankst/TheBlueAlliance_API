@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
-using TheBlueAlliance.Models.MainModels;
-using TheBlueAlliance.Models.SpecificModels;
+using TheBlueAlliance.MainModels;
+using TheBlueAlliance.SpecificModels;
 
 namespace TheBlueAlliance
 {

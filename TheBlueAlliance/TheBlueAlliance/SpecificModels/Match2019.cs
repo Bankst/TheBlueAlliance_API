@@ -1,6 +1,6 @@
-﻿using TheBlueAlliance.Models.MainModels;
+﻿using TheBlueAlliance.MainModels;
 
-namespace TheBlueAlliance.Models.SpecificModels
+namespace TheBlueAlliance.SpecificModels
 {
 	public class Match2019 : Match
 	{

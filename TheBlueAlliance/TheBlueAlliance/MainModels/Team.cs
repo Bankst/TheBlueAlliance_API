@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheBlueAlliance.Models.MainModels
+namespace TheBlueAlliance.MainModels
 {
 	public class Team
 	{

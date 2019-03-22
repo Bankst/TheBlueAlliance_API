@@ -22,7 +22,6 @@ namespace TheBlueAlliance.Tests
             const string expectedLocation = "Albany Civic Center";
             const string expectedEventCode = "gaalb";
             const int expectedEventType = 1;
-            const string expectedAlliances = "frc832";
 			const string expectedEventTypeString = "District";
             const string expectedStartDate = "2019-03-14";
             const string expectedWebcasts = "twitch";
@@ -45,7 +44,10 @@ namespace TheBlueAlliance.Tests
             Assert.AreEqual(expectedEventTypeString, actualEventInformation.event_type_string, "Event Type Strings are not as expected");
             Assert.AreEqual(expectedStartDate, actualEventInformation.start_date, "Start Dates are not as expected");
             Assert.AreEqual(expectedEventType, actualEventInformation.event_type, "Event Types are not as expected");
-        }
+            Assert.AreEqual(expectedWeek, actualEventInformation.week, "Week are not as expected");
+            Assert.AreEqual(expectedCity, actualEventInformation.city, "City are not as expected");
+            Assert.AreEqual(expectedCountry, actualEventInformation.country, "Country are not as expected");
+		}
 
         [TestMethod]
         public void GetEventAwards_TestMethod()
@@ -129,40 +131,37 @@ namespace TheBlueAlliance.Tests
         [TestMethod]
         public void GetEvents_TestMethod()
         {
-            var actualEvents = Events.GetEvents(2015);
+            var actualEvents = Events.GetEvents(2019);
 
-            const string expectedKey = "2015abca";
-            const string expectedWebsite = "http://frcwest.com/";
-            const bool expectedOfficial = true;
-            const string expectedEndDate = "2015-04-04";
-            const string expectedName = "Western Canada Regional";
-            const string expectedShortName = "Western Canada";
-            const object expectedFaceBookEid = null;
-            const object expectedEventDistrictString = null;
-            const string expectedVenueAddress = "Ernest Manning High School\n20 Springborough Blvd SW\nCalgary, AB T3H 0N7\nCanada";
-            const int expectedEventDistrict = 0;
-            const string expectedLocation = "Calgary, AB, Canada";
-            const string expectedEventCode = "abca";
-            const int expectedYear = 2015;
-            const string expectedAlliances0Pick1 = "frc4719";
-            const string expectedEventTypeString = "Regional";
-            const string expectedStartDate = "2015-04-01";
-            const int expectedEventType = 0;
+            var actualEvent = actualEvents.First(x => x.key.Equals("2019gaalb"));
 
-            Assert.AreEqual(expectedKey, actualEvents[0].key, "Event Keys are not as expected");
-            Assert.AreEqual(expectedWebsite, actualEvents[0].website, "Websites are not as expected");
-            Assert.AreEqual(expectedEndDate, actualEvents[0].end_date, "End Dates are not as expected");
-            Assert.AreEqual(expectedName, actualEvents[0].name, "Names are not as expected");
-            Assert.AreEqual(expectedShortName, actualEvents[0].short_name, "Short Name are not as expected");
-            Assert.AreEqual(expectedEventDistrictString, actualEvents[0].district.display_name, "District Strings are not as expected");
-            Assert.AreEqual(expectedVenueAddress, actualEvents[0].address, "Venue Addresses are not as expected");
-            Assert.AreEqual(expectedLocation, actualEvents[0].location_name, "Locations are not as expected");
-            Assert.AreEqual(expectedEventCode, actualEvents[0].event_code, "Event Codes are not as expected");
-            Assert.AreEqual(expectedYear, actualEvents[0].year, "Years are not as expected");
-            // Assert.AreEqual(expectedAlliances0Pick1, actualEvents[0].alliances[0].picks[0], "Alliance Picks are not as expected");
-            Assert.AreEqual(expectedEventTypeString, actualEvents[0].event_type_string, "Event Type Strings are not as expected");
-            Assert.AreEqual(expectedStartDate, actualEvents[0].start_date, "Start Dates are not as expected");
-            Assert.AreEqual(expectedEventType, actualEvents[0].event_type, "Event Types are not as expected");
+            const string expectedKey = "2019gaalb";
+            const string expectedWebsite = "http://www.gafirst.org";
+            const string expectedEndDate = "2019-03-16";
+            const string expectedName = "PCH District Albany Event presented by Procter & Gamble";
+            const string expectedShortName = "Albany presented by Procter & Gamble";
+            const string expectedEventDistrictString = "Peachtree";
+            const string expectedVenueAddress = "100 W Oglethorpe Blvd, Albany, GA 31701, USA";
+            const string expectedLocation = "Albany Civic Center";
+            const string expectedEventCode = "gaalb";
+            const int expectedYear = 2019;
+            const string expectedEventTypeString = "District";
+            const string expectedStartDate = "2019-03-14";
+            const int expectedEventType = 1;
+
+            Assert.AreEqual(expectedKey, actualEvent.key, "Event Keys are not as expected");
+            Assert.AreEqual(expectedWebsite, actualEvent.website, "Websites are not as expected");
+            Assert.AreEqual(expectedEndDate, actualEvent.end_date, "End Dates are not as expected");
+            Assert.AreEqual(expectedName, actualEvent.name, "Names are not as expected");
+            Assert.AreEqual(expectedShortName, actualEvent.short_name, "Short Name are not as expected");
+            Assert.AreEqual(expectedEventDistrictString, actualEvent.district.display_name, "District Strings are not as expected");
+            Assert.AreEqual(expectedVenueAddress, actualEvent.address, "Venue Addresses are not as expected");
+            Assert.AreEqual(expectedLocation, actualEvent.location_name, "Locations are not as expected");
+            Assert.AreEqual(expectedEventCode, actualEvent.event_code, "Event Codes are not as expected");
+            Assert.AreEqual(expectedYear, actualEvent.year, "Years are not as expected");
+            Assert.AreEqual(expectedEventTypeString, actualEvent.event_type_string, "Event Type Strings are not as expected");
+            Assert.AreEqual(expectedStartDate, actualEvent.start_date, "Start Dates are not as expected");
+            Assert.AreEqual(expectedEventType, actualEvent.event_type, "Event Types are not as expected");
         }
 
         [TestMethod]

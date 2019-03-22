@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using TheBlueAlliance.Properties;
 
 namespace TheBlueAlliance
 {
@@ -15,15 +14,23 @@ namespace TheBlueAlliance
 		public const string ApiUrl = "http://www.thebluealliance.com/api/v3";
 		public const string ApiKey = "plzzrHeQRVUlc7CQF0rpeP8T9gXx4Y8UnPF6wGgq3Ma5dsa65nc3nJK2oOjQSSLs";
 
-		private static readonly string CacheRoot = $@"{AppDomain.CurrentDomain.BaseDirectory}\Cache\TBA\";
+		private static readonly string CacheRoot = $@"{AppDomain.CurrentDomain.BaseDirectory}\Cache\TBA";
 
 		private readonly string _path;
+		private readonly string _cacheFolder;
+		private readonly string _cacheFilename;
 
 		private string LastModified;
 
 		public ApiRequest(string path)
 		{
 			_path = path;
+
+			var split = _path.Split('/');
+			var fileFolder = string.Join(@"/", split.Take(split.Length - 1));
+
+			_cacheFolder = $"{CacheRoot}{fileFolder.Replace(@"/", @"\")}";
+			_cacheFilename = $"{split.Last()}.json";
 		}
 
 		public T GetData<T>()
@@ -76,11 +83,6 @@ namespace TheBlueAlliance
 					Console.WriteLine("Bad API Key!");
 				}
 			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				// data deserialize fail
-			}
 			return obj;
 		}
 
@@ -94,16 +96,16 @@ namespace TheBlueAlliance
 
 		private void CacheData(string rawData)
 		{
-			var path = Path.Combine(CacheRoot, _path);
-			var filePath = Path.Combine(path, ".json");
-			if (File.Exists(filePath))
+			var fullPath = Path.Combine(_cacheFolder, _cacheFilename);
+
+			if (File.Exists(fullPath))
 			{
-				File.Delete(filePath);
+				File.Delete(fullPath);
 			}
 
-			Directory.CreateDirectory(path);
+			Directory.CreateDirectory(_cacheFolder);
 
-			File.WriteAllText(path, rawData);
+			File.WriteAllText(fullPath, rawData);
 		}
 
 		private static T GetObject<T>(string data)

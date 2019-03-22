@@ -1,4 +1,4 @@
-﻿namespace TheBlueAlliance.Models.MainModels
+﻿namespace TheBlueAlliance.MainModels
 {
 	/// <summary>
 	///     Information regarding the location and type of a webcast for an event
