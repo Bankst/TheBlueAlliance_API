@@ -1,19 +1,20 @@
-﻿using TheBlueAlliance.MainModels;
-using TheBlueAlliance.SpecificModels;
+﻿using TheBlueAlliance.SpecificModels;
 
 namespace TheBlueAlliance
 {
 	public class Matches
     {
-	    private static ApiRequest _matchRequest;
-	    public static Match2019 GetMatch2019(string matchKey)
+	    public static ApiRequest MatchRequest { get; set; }
+	    public static Match2019 GetMatch2019(string matchKey, bool checkCache = true)
 	    {
-		    if (_matchRequest == null)
+		    if (MatchRequest == null)
 		    {
-				_matchRequest = new ApiRequest($"/match/{matchKey}");
+				MatchRequest = new ApiRequest($"/match/{matchKey}");
 		    }
+
+		    MatchRequest.ShouldCheckCache = checkCache;
 			
-		    var response = _matchRequest.GetData<Match2019>();
+		    var response = MatchRequest.GetData<Match2019>();
 			return response;
 	    }
     }

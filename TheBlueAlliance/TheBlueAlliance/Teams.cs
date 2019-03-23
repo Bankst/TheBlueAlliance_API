@@ -7,19 +7,16 @@ namespace TheBlueAlliance
 {
 	public class Teams
 	{
-
-
-
 		public static ApiRequest TeamEventAwardsRequest { get; private set; }
 		public static Award[] GetTeamEventAwards(string teamKey, string eventKey, bool checkCache = true)
 		{
 			if (TeamEventAwardsRequest == null)
 			{
-				TeamEventAwardsRequest = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamEventAwardsRequest = new ApiRequest($"/team/{teamKey}/event/{eventKey}/awards");
 			}
+
+			TeamEventAwardsRequest.ShouldCheckCache = checkCache;
+
 			var response = TeamEventAwardsRequest.GetData<Award[]>();
 			return response.ToArray();
 		}
@@ -34,11 +31,10 @@ namespace TheBlueAlliance
 
 			if (TeamEventMatches2019Request == null)
 			{
-				TeamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamEventMatches2019Request = new ApiRequest($"/team/{teamKey}/event/{eventKey}/matches");
 			}
+
+			TeamEventMatches2019Request.ShouldCheckCache = checkCache;
 
 			var response = TeamEventMatches2019Request.GetData<Match2019[]>();
 			return response.ToArray();
@@ -49,11 +45,11 @@ namespace TheBlueAlliance
 		{
 			if (TeamEventsRequest == null)
 			{
-				TeamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamEventsRequest = new ApiRequest($"/team/{teamKey}/events/{year}");
 			}
+
+			TeamEventsRequest.ShouldCheckCache = checkCache;
+
 			var response = TeamEventsRequest.GetData<Event[]>();
 			return response.ToArray();
 		}
@@ -64,11 +60,11 @@ namespace TheBlueAlliance
 		{
 			if (TeamHistoricalAwardsRequest == null)
 			{
-				TeamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamHistoricalAwardsRequest = new ApiRequest($"/team/{teamKey}/awards");
 			}
+
+			TeamHistoricalAwardsRequest.ShouldCheckCache = checkCache;
+
 			var response = TeamHistoricalAwardsRequest.GetData<Award[]>();
 			return response.ToArray();
 		}
@@ -78,11 +74,10 @@ namespace TheBlueAlliance
 		{
 			if (TeamHistoryRequest == null)
 			{
-				TeamHistoryRequest = new ApiRequest($"/team/{teamKey}/events")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamHistoryRequest = new ApiRequest($"/team/{teamKey}/events");
 			}
+
+			TeamHistoryRequest.ShouldCheckCache = checkCache;
 
 			var response = TeamHistoryRequest.GetData<List<Event>>();
 			return response.ToArray();
@@ -94,11 +89,10 @@ namespace TheBlueAlliance
 		{
 			if (TeamInformationRequest == null)
 			{
-				TeamInformationRequest = new ApiRequest($"/team/{teamKey}")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamInformationRequest = new ApiRequest($"/team/{teamKey}");
 			}
+
+			TeamInformationRequest.ShouldCheckCache = checkCache;
 
 			var response = TeamInformationRequest.GetData<Team>();
 			return response;
@@ -109,11 +103,10 @@ namespace TheBlueAlliance
 		{
 			if (TeamMediaRequest == null)
 			{
-				TeamMediaRequest = new ApiRequest($"/team/{teamKey}/media/{year}")
-				{
-					ShouldCheckCache = checkCache
-				};
+				TeamMediaRequest = new ApiRequest($"/team/{teamKey}/media/{year}");
 			}
+
+			TeamMediaRequest.ShouldCheckCache = checkCache;
 
 			var response = TeamMediaRequest.GetData<List<Media>>();
 			return response.ToArray();

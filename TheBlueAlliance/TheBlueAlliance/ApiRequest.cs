@@ -80,9 +80,10 @@ namespace TheBlueAlliance
 							case 200:
 								var stringData = await GetResponseData(resp);
 								obj = GetObject<T>(stringData);
-								HasCached = CacheData(stringData);
+								CacheData(stringData);
 								break;
 							case 304:
+								HasHitCache = true;
 								obj = GetCachedData<T>();
 								break;
 							case 401:
@@ -102,17 +103,13 @@ namespace TheBlueAlliance
 			return obj;
 		}
 
-		private T GetCachedData<T>()
-		{
-			HasHitCache = true;
-			return GetObject<T>(GetCachedJson());
-		}
+		private T GetCachedData<T>() => GetObject<T>(GetCachedJson());
 
 		private string GetCachedJson() => File.Exists(_cacheFullPath) ? File.ReadAllText(_cacheFullPath) : null;
 
 		public bool CacheExists() => File.Exists(_cacheFullPath);
 
-		private bool CacheData(string rawData)
+		private void CacheData(string rawData)
 		{
 			try
 			{
@@ -124,12 +121,10 @@ namespace TheBlueAlliance
 				Directory.CreateDirectory(_cacheFolder);
 
 				File.WriteAllText(_cacheFullPath, rawData);
-				return true;
 			}
 			catch(Exception ex)
 			{
 				Console.WriteLine($"Failed to cache response:\n {ex.Message}");
-				return false;
 			}
 			
 		}

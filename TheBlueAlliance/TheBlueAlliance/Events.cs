@@ -7,53 +7,57 @@ namespace TheBlueAlliance
 {
 	public class Events
 	{
-		private static ApiRequest _eventInformationRequest;
-		public static Event GetEventInformation(string eventKey)
+		public static ApiRequest EventInformationRequest { get; private set; }
+		public static Event GetEventInformation(string eventKey, bool checkCache = true)
 		{
-			if (_eventInformationRequest == null)
+			if (EventInformationRequest == null)
 			{
-				_eventInformationRequest = new ApiRequest($"/event/{eventKey}");
+				EventInformationRequest = new ApiRequest($"/event/{eventKey}");
 			}
+			EventInformationRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventInformationRequest.GetData<Event>();
+			var response = EventInformationRequest.GetData<Event>();
 			return response;
 		}
 
-		private static ApiRequest _eventAwardsRequest;
-		public static Award[] GetEventAwards(string eventKey)
+		public static ApiRequest EventAwardsRequest { get; private set; }
+		public static Award[] GetEventAwards(string eventKey, bool checkCache = true)
 		{
-			if (_eventAwardsRequest == null)
+			if (EventAwardsRequest == null)
 			{
-				_eventAwardsRequest = new ApiRequest($"/event/{eventKey}/awards");
+				EventAwardsRequest = new ApiRequest($"/event/{eventKey}/awards");
 			}
+			EventAwardsRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventAwardsRequest.GetData<Award[]>();
+			var response = EventAwardsRequest.GetData<Award[]>();
 			return response.ToArray();
 		}
 
-		private static ApiRequest _eventMatchesRequest;
-		public static Match2019[] GetEventMatches2019(string eventKey)
+		public static ApiRequest EventMatchesRequest { get; private set; }
+		public static Match2019[] GetEventMatches2019(string eventKey, bool checkCache = true)
 		{
-			if (_eventMatchesRequest == null)
+			if (EventMatchesRequest == null)
 			{
-				_eventMatchesRequest = new ApiRequest($"/event/{eventKey}/matches");
+				EventMatchesRequest = new ApiRequest($"/event/{eventKey}/matches");
 			}
+			EventMatchesRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventMatchesRequest.GetData<Match2019[]>();
+			var response = EventMatchesRequest.GetData<Match2019[]>();
 			return response.ToArray();
 		}
 
-		private static ApiRequest _eventRankingsRequest;
-		public static Ranking2019[] GetEventRankings(string eventKey)
+		public static ApiRequest EventRankingsRequest { get; private set; }
+		public static Ranking2019[] GetEventRankings(string eventKey, bool checkCache = true)
 		{
 			var teamList = new List<Ranking2019>();
 
-			if (_eventRankingsRequest == null)
+			if (EventRankingsRequest == null)
 			{
-				_eventRankingsRequest = new ApiRequest($"/event/{eventKey}/rankings");
+				EventRankingsRequest = new ApiRequest($"/event/{eventKey}/rankings");
 			}
+			EventRankingsRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventRankingsRequest.GetData<RawRanking>();
+			var response = EventRankingsRequest.GetData<RawRanking>();
 
 			var sortOrderInfo = response.sort_order_info.ToArray();
 
@@ -86,27 +90,29 @@ namespace TheBlueAlliance
 			return specifics.First(x => x.name.Equals(name)).value;
 		}
 
-		private static ApiRequest _eventsRequest;
-		public static Event[] GetEvents(int year)
+		public static ApiRequest EventsRequest { get; private set; }
+		public static Event[] GetEvents(int year, bool checkCache = true)
 		{
-			if (_eventsRequest == null)
+			if (EventsRequest == null)
 			{
-				_eventsRequest = new ApiRequest($"/events/{year}");
+				EventsRequest = new ApiRequest($"/events/{year}");
 			}
+			EventsRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventsRequest.GetData<List<Event>>();
+			var response = EventsRequest.GetData<List<Event>>();
 			return response.ToArray();
 		}
 
-		private static ApiRequest _eventTeamsRequest;
-		public static Team[] GetEventTeamsList(string eventKey)
+		public static ApiRequest EventTeamsRequest { get; private set; }
+		public static Team[] GetEventTeamsList(string eventKey, bool checkCache = true)
 		{
-			if (_eventTeamsRequest == null)
+			if (EventTeamsRequest == null)
 			{
-				_eventTeamsRequest = new ApiRequest($"/event/{eventKey}/teams");
+				EventTeamsRequest = new ApiRequest($"/event/{eventKey}/teams");
 			}
+			EventTeamsRequest.ShouldCheckCache = checkCache;
 
-			var response = _eventTeamsRequest.GetData<List<Team>>();
+			var response = EventTeamsRequest.GetData<List<Team>>();
 			return response.ToArray();
 		}
 	}
