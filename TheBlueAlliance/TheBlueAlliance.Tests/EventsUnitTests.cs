@@ -50,6 +50,20 @@ namespace TheBlueAlliance.Tests
 		}
 
         [TestMethod]
+        public void GetEventInformation_BeforeEvent_TestMethod()
+        {
+            var actualEventInformation = Events.GetEventInformation("2020gagai");
+
+            Assert.AreEqual("2020gagai", actualEventInformation.key);
+        }
+
+        [TestMethod]
+        public void GetEventMatches_BeforeEvent_TestMethod()
+        {
+            var actualEventMatches = Events.GetEventMatches2020("2020gagai");
+        }
+
+        [TestMethod]
         public void GetEventAwards_TestMethod()
         {
             var actualAwardsInformation = Events.GetEventAwards("2019gaalb");
@@ -101,7 +115,7 @@ namespace TheBlueAlliance.Tests
         [TestMethod]
         public void GetEventRankings_TestMethod()
         {
-            var actualEventRankings = Events.GetEventRankings("2019gaalb");
+            var actualEventRankings = Events.GetEventRankings2019("2019gaalb");
 
 			var teamRankings = actualEventRankings.First(x => x.team_key.Equals("frc832"));
 

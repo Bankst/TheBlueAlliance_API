@@ -62,6 +62,7 @@
     <Compile Include="MainModels\District.cs" />
     <Compile Include="MainModels\Event.cs" />
     <Compile Include="MainModels\Webcast.cs" />
+    <Compile Include="SpecificModels\Match2020.cs" />
     <Compile Include="SpecificModels\Match2019.cs" />
     <Compile Include="SpecificModels\Ranking2019.cs" />
     <Compile Include="MainModels\Media.cs" />

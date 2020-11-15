@@ -47,7 +47,7 @@ namespace TheBlueAlliance
 		}
 
 		public static ApiRequest EventRankingsRequest { get; private set; }
-		public static Ranking2019[] GetEventRankings(string eventKey, bool checkCache = true)
+		public static Ranking2019[] GetEventRankings2019(string eventKey, bool checkCache = true)
 		{
 			var teamList = new List<Ranking2019>();
 
